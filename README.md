@@ -28,7 +28,9 @@ Je to trochu špína, ale správným řešením se teď nebudu zdržovat (správ
 
 ## Napojení na model
 
-Konstruktoru této komponenty se předává objekt `IFilesRepository`, který je zodpovědný za CRUD entit typu `IFileEntity`. Mělo by to být nasaditelné jak na `PetrP/Orm`, tak i `Tharos/LeanMapper`.
+Konstruktoru této komponenty se předává objekt `IFilesRepository`, který je zodpovědný za CRUD entit typu `IFileEntity`. Mělo by to být nasaditelné jak na `PetrP/Orm`, tak i `Tharos/LeanMapper`. Repository je také zodpovědné za přesun souboru někam mimo temp.
+
+Pozor na to, že `saveFile` se volá pouze při uploadu přes signál. U souborů, které se uploadují přes formulář, si uložení entity musíte obstarat v obsluze formuláře.
 
 
 ## Napojení na frontend
