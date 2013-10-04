@@ -235,7 +235,8 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 			}
 			else
 			{
-				$filePayload = $this->persistRaiseEventAndFlush($file);
+				$this->filesRepository->saveFile($file);
+				$filePayload = $this->raiseAutoUploadEvent($file);
 				$this->storeFileIdInSession($file);
 				if (!$filePayload)
 				{
@@ -269,9 +270,8 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 	 * @param IFileEntity $file
 	 * @return array
 	 */
-	private function persistRaiseEventAndFlush(IFileEntity $file)
+	private function raiseAutoUploadEvent(IFileEntity $file)
 	{
-		$this->filesRepository->saveFile($file);
 		$filePayload = new \ArrayObject;
 		$this->onAutoUpload($file, $filePayload);
 		$filePayload = $filePayload->getArrayCopy();
