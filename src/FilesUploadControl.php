@@ -62,6 +62,19 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 		$this->autoUploadsSessionSection = $autoUploadsSession;
 	}
 
+
+	/**
+	 * @param IFileEntity $file
+	 * @param string[] $validationErrors
+	 * @return array
+	 */
+	protected function createErrorPayload(IFileEntity $file, $validationErrors)
+	{
+		return array(
+			'name' => $file->getFileName(),
+			'error' => count($validationErrors) === 1 ? $validationErrors[0] : $validationErrors,
+		);
+	}
 	protected function createTemplate()
 	{
 		$template = parent::createTemplate();
@@ -228,10 +241,7 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 			$validationErrors = $this->getAutoUploadValidationErrors($file);
 			if ($validationErrors)
 			{
-				$filePayload = array(
-					'name' => $file->getFileName(),
-					'error' => count($validationErrors) === 1 ? $validationErrors[0] : $validationErrors,
-				);
+				$filePayload = $this->createErrorPayload($file, $validationErrors);
 			}
 			else
 			{
