@@ -15,8 +15,25 @@ use Nette\Utils\Arrays;
 class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 {
 
+	/**
+	 * onAutoUpload(IFileEntity $file, \ArrayObject $filePayload)
+	 *
+	 * @var array
+	 */
 	public $onAutoUpload = array();
+
+	/**
+	 * onBeforeDelete(IFileEntity $file)
+	 *
+	 * @var array
+	 */
 	public $onBeforeDelete = array();
+
+	/**
+	 * onDelete(IFileEntity $file)
+	 *
+	 * @var array
+	 */
 	public $onDelete = array();
 
 	public $thumbnailMaxWidth = 80;
@@ -62,6 +79,31 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 		$this->autoUploadsSessionSection = $autoUploadsSession;
 	}
 
+	protected function createFilePayload(IFileEntity $file)
+	{
+		if ($file->getId() === NULL)
+		{
+			return array(
+				'name' => $file->getFileName(),
+				'error' => 'Upload refused.',
+			);
+		}
+		$pathPrefix = $this->lookupPath('Nette\Application\UI\Presenter') . self::NAME_SEPARATOR;
+		$filePayload = array(
+			'id' => $file->getId(),
+			'name' => $file->getFileName(),
+			'size' => $file->getFileSize(),
+			'type' => $file->getContentType(),
+			'delete_type' => 'DELETE',
+			'delete_url' => $this->getPresenter()->link($pathPrefix . 'delete!', array($pathPrefix . 'id' => $file->getId())),
+		);
+		if ($this->urlProvider)
+		{
+			$filePayload['thumbnail_url'] = $this->urlProvider->getThumbnailUrl($file, $this->thumbnailMaxWidth, $this->thumbnailMaxHeight);
+			$filePayload['url'] = $this->urlProvider->getFullsizeUrl($file);
+		}
+		return $filePayload;
+	}
 
 	/**
 	 * @param IFileEntity $file
@@ -75,6 +117,7 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 			'error' => count($validationErrors) === 1 ? $validationErrors[0] : $validationErrors,
 		);
 	}
+
 	protected function createTemplate()
 	{
 		$template = parent::createTemplate();
@@ -285,32 +328,6 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 		$filePayload = new \ArrayObject;
 		$this->onAutoUpload($file, $filePayload);
 		$filePayload = $filePayload->getArrayCopy();
-		return $filePayload;
-	}
-
-	private function createFilePayload(IFileEntity $file)
-	{
-		if ($file->getId() === NULL)
-		{
-			return array(
-				'name' => $file->getFileName(),
-				'error' => 'Upload refused.',
-			);
-		}
-		$pathPrefix = $this->lookupPath('Nette\Application\UI\Presenter') . self::NAME_SEPARATOR;
-		$filePayload = array(
-			'id' => $file->getId(),
-			'name' => $file->getFileName(),
-			'size' => $file->getFileSize(),
-			'type' => $file->getContentType(),
-			'delete_type' => 'DELETE',
-			'delete_url' => $this->getPresenter()->link($pathPrefix . 'delete!', array($pathPrefix . 'id' => $file->getId())),
-		);
-		if ($this->urlProvider)
-		{
-			$filePayload['thumbnail_url'] = $this->urlProvider->getThumbnailUrl($file, $this->thumbnailMaxWidth, $this->thumbnailMaxHeight);
-			$filePayload['url'] = $this->urlProvider->getFullsizeUrl($file);
-		}
 		return $filePayload;
 	}
 
