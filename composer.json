@@ -1,0 +1,25 @@
+{
+	"name": "clevis/files-upload-control",
+	"type": "library",
+	"description": "Files upload control for Nette Forms.",
+	"homepage": "http://clevis.cz",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Clevis s.r.o.",
+			"homepage": "http://clevis.cz"
+		}
+	],
+
+	"require": {
+		"php": ">= 5.3.7"
+	},
+	"require-dev": {
+		"nette/nette": "@dev",
+		"mockery/mockery": "@dev"
+	},
+
+	"autoload": {
+		"classmap": ["src/"]
+	}
+}

@@ -1,0 +1,24 @@
+{**
+ * Control pro upload souborů, viz FilesUploadControl::getControl()
+ *
+ * @param Sim\FilesUploadControl $uploadControl File upload control.
+ *}
+{var $pathToThisControl = $uploadControl->lookupPath('Nette\Application\UI\Presenter')}
+
+<div class="fileupload" id="{$uploadControl->getHtmlId()}">
+
+	<input class="fileinput" type="file" name="{$uploadControl->getHtmlName()}[]" multiple accept="image/*"
+		data-url="{plink "$pathToThisControl-upload!"}"
+		data-autoUploadedIdsHtmlName="{$uploadControl->getAutoUploadedIdsHtmlName()}[]">
+
+	<div class="dragndrop">
+		<i class="icon-file"></i> To attach files drag & drop here or <a href="#" class="selectFiles btn btn-mini">select files from your computer…</a>
+	</div>
+
+	<div class="progress progress-striped" style="display:none">
+		<div class="bar" style="width: 0;"></div>
+	</div>
+
+	<ul class="uploaded"></ul>
+
+</div>
