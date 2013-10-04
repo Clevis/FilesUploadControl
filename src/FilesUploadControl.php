@@ -343,7 +343,10 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 			$isValid = self::isFileValid($file, $operation, $rule->arg);
 			if (!$isValid)
 			{
-				$fileErrors[] = Validator::formatMessage($rule, false);
+				$formatterClass = class_exists('Nette\Forms\Validator')
+					? 'Nette\Forms\Validator'
+					: 'Nette\Forms\Rules';
+				$fileErrors[] = $formatterClass::formatMessage($rule, false);
 			}
 		}
 		return $fileErrors;
