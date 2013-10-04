@@ -12,6 +12,13 @@ Při zpracování formuláře dostanete jako hodnotu prvku pole entit, které re
 API těch ajaxových signálů bylo psané na míru [jQuery File Upload Plugin](https://github.com/blueimp/jQuery-File-Upload), ale mělo by být použitelné i s jinými nahrávadly. Viz napojení na frontend.
 
 
+## Kompatibilita
+
+Testy prochází jak na Nette `@dev` (momentálně nette/nette@ae11ca1), tak i na `2.0.12`.
+
+Testy nebudou procházet v PHP 5.3 - párkrát jsem použil `$this` v closuře a možná sem tam nějaké to zkrácené pole... Ale samotná komponenta by v PHP 5.3 fungovat měla.
+
+
 ## Napojení na Template factory
 
 Komponenta vyžaduje, aby v service containeru byla služba s názvem "templateFactory" s public metodou `createTemplate($file, Nette\Application\UI\Control $control)`.
