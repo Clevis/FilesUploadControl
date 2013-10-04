@@ -5,7 +5,7 @@ use Nette\Http\FileUpload;
 use Nette\Application\UI\Form;
 use Nette\Application\Request;
 
-require_once __DIR__ . '/TestCase.php';
+require_once __DIR__ . '/../common/TestCase.php';
 
 /**
  * @author Václav Šír

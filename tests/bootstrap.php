@@ -4,6 +4,7 @@ use Nette\Application\UI\Presenter;
 use Clevis\TemplateFactory;
 
 require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/common/TemplateFactory.php';
 
 $configurator = new Nette\Configurator;
 $configurator->setDebugMode(FALSE);
