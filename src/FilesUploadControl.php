@@ -88,7 +88,7 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 
 	public function getDeleteLink(IFileEntity $file)
 	{
-		return $this->getSignalLink('delete', array('id' => $file->getId()));
+		return $this->getSignalLink('delete', array('id' => $file->getEntityId()));
 	}
 
 	/**
@@ -114,7 +114,7 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 
 	protected function createFilePayload(IFileEntity $file)
 	{
-		if ($file->getId() === NULL)
+		if ($file->getEntityId() === NULL)
 		{
 			return array(
 				'name' => $file->getFileName(),
@@ -122,7 +122,7 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 			);
 		}
 		$filePayload = array(
-			'id' => $file->getId(),
+			'id' => $file->getEntityId(),
 			'name' => $file->getFileName(),
 			'size' => $file->getFileSize(),
 			'type' => $file->getContentType(),
@@ -206,7 +206,7 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 		{
 			if ($this->autoUploadsSessionSection)
 			{
-				$key = array_search($file->getId(), (array) $this->autoUploadsSessionSection->autoIds);
+				$key = array_search($file->getEntityId(), (array) $this->autoUploadsSessionSection->autoIds);
 				if ($key !== false)
 				{
 					unset($this->autoUploadsSessionSection->autoIds[$key]);
@@ -346,9 +346,9 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 	 */
 	private function storeFileIdInSession($file)
 	{
-		if ($file->getId() !== NULL && $this->autoUploadsSessionSection)
+		if ($file->getEntityId() !== NULL && $this->autoUploadsSessionSection)
 		{
-			$this->autoUploadsSessionSection->autoIds[] = $file->getId();
+			$this->autoUploadsSessionSection->autoIds[] = $file->getEntityId();
 		}
 	}
 
@@ -388,9 +388,9 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 	private function handleDelete(IFileEntity $file)
 	{
 		$this->onBeforeDelete($file);
-		if ($this->autoUploadsSessionSection && in_array($file->getId(), (array) $this->autoUploadsSessionSection->autoIds))
+		if ($this->autoUploadsSessionSection && in_array($file->getEntityId(), (array) $this->autoUploadsSessionSection->autoIds))
 		{
-			$key = array_search($file->getId(), (array) $this->autoUploadsSessionSection->autoIds);
+			$key = array_search($file->getEntityId(), (array) $this->autoUploadsSessionSection->autoIds);
 			unset($this->autoUploadsSessionSection->autoIds[$key]);
 			$this->filesRepository->deleteFile($file);
 		}

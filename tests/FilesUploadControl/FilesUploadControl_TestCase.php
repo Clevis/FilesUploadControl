@@ -149,7 +149,7 @@ abstract class FilesUploadControl_TestCase extends TestCase
 	protected function createFileMock($id, $fileName, $fileSize = 1, $contentType = 'application/octet-stream')
 	{
 		$uploadedFile = Mockery::mock('Clevis\FilesUpload\IFileEntity');
-		$uploadedFile->shouldReceive('getId')->zeroOrMoreTimes()->andReturn($id);
+		$uploadedFile->shouldReceive('getEntityId')->zeroOrMoreTimes()->andReturn($id);
 		$uploadedFile->shouldReceive('getFileName')->zeroOrMoreTimes()->andReturn($fileName);
 		$uploadedFile->shouldReceive('getFileSize')->zeroOrMoreTimes()->andReturn($fileSize);
 		$uploadedFile->shouldReceive('getContentType')->zeroOrMoreTimes()->andReturn($contentType);

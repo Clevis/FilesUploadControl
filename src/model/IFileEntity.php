@@ -10,7 +10,7 @@ interface IFileEntity
 	 *
 	 * @return int|NULL
 	 */
-	public function getId();
+	public function getEntityId();
 
 	/**
 	 * User file name.

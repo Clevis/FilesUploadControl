@@ -17,13 +17,13 @@ class FilesUploadControl_deleteSignal_Test extends FilesUploadControl_TestCase
 		$this->expectFilesMock('getById', array(array(1)), $fileToDelete);
 		$this->expectFilesMock('deleteFile', array($fileToDelete));
 		$session = $this->createSessionSection();
-		$session->autoIds = array($fileToDelete->getId());
+		$session->autoIds = array($fileToDelete->getEntityId());
 		$this->control->setAutoUploadsSessionSection($session);
 		$beforeDeleteEventHandler = Mockery::mock('FilesUploadControl_NonFinalCallback');
 		$beforeDeleteEventHandler->shouldReceive('__invoke')
 			->with(Mockery::on(function (\Clevis\FilesUpload\IFileEntity $file)
 			{
-				return $file->getFileName() === 'test.gif' && $file->getId();
+				return $file->getFileName() === 'test.gif' && $file->getEntityId();
 			}))
 			->once();
 		$this->control->onBeforeDelete[] = $beforeDeleteEventHandler;
@@ -37,7 +37,7 @@ class FilesUploadControl_deleteSignal_Test extends FilesUploadControl_TestCase
 		$this->expectFilesMock('getById', array(array(1)), $fileToDelete);
 		$this->expectFilesMock('deleteFile', array($fileToDelete));
 		$session = $this->createSessionSection();
-		$session->autoIds = array($fileToDelete->getId());
+		$session->autoIds = array($fileToDelete->getEntityId());
 		$this->control->setAutoUploadsSessionSection($session);
 		$deleteEventHandler = Mockery::mock('FilesUploadControl_NonFinalCallback');
 		$deleteEventHandler->shouldReceive('__invoke')
@@ -70,7 +70,7 @@ class FilesUploadControl_deleteSignal_Test extends FilesUploadControl_TestCase
 		$this->expectFilesMock('getById', array(array(1)), $fileToDelete);
 		$this->expectFilesMock('deleteFile', array($fileToDelete));
 		$sessionSection = $this->createSessionSection();
-		$sessionSection->autoIds = array($fileToDelete->getId());
+		$sessionSection->autoIds = array($fileToDelete->getEntityId());
 		$this->control->setAutoUploadsSessionSection($sessionSection);
 
 		$response = $this->sendDeleteSignal($fileToDelete);
@@ -86,7 +86,7 @@ class FilesUploadControl_deleteSignal_Test extends FilesUploadControl_TestCase
 		$this->expectFilesMock('getById', array(array(1)), $fileToDelete);
 		$this->expectFilesMock('deleteFile', array($fileToDelete));
 		$sessionSection = $this->createSessionSection();
-		$sessionSection->autoIds = array($fileToDelete->getId());
+		$sessionSection->autoIds = array($fileToDelete->getEntityId());
 		$this->control->setAutoUploadsSessionSection($sessionSection);
 
 		$response = $this->sendDeleteSignal($fileToDelete);
@@ -104,7 +104,7 @@ class FilesUploadControl_deleteSignal_Test extends FilesUploadControl_TestCase
 		$request = new Request('Test', 'post', array());
 		$request->parameters = array(
 			Nette\Application\UI\Presenter::SIGNAL_KEY => 'uploadForm-uploadControl-delete',
-			'uploadForm-uploadControl-id' => $fileToDelete->getId(),
+			'uploadForm-uploadControl-id' => $fileToDelete->getEntityId(),
 		);
 		$response = $this->runRequest($request);
 		return $response;

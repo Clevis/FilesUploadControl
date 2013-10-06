@@ -113,7 +113,7 @@ class FilesUploadControl_signalValidation_Test extends FilesUploadControl_TestCa
 		$this->expectFilesMock('saveFile', array($file));
 		$response = $this->runRequest($request);
 		$this->assertInstanceOf('Nette\Application\Responses\JsonResponse', $response);
-		$this->assertSame($file->getId(), $response->payload['files'][0]['id']);
+		$this->assertSame($file->getEntityId(), $response->payload['files'][0]['id']);
 	}
 
 }
