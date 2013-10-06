@@ -223,11 +223,18 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 	{
 		foreach ($fileInfos as $fileUploadInfo)
 		{
+			if ($fileUploadInfo === NULL)
+			{
+				continue;
+			}
 			/** @var \Nette\Http\FileUpload $fileUploadInfo */
 			if ($fileUploadInfo->error === UPLOAD_ERR_OK)
 			{
 				$file = $this->filesRepository->createNewFile($fileUploadInfo->getName(), $fileUploadInfo->getTemporaryFile());
-				$this->uploadedFiles[] = $file;
+				if ($file !== NULL)
+				{
+					$this->uploadedFiles[] = $file;
+				}
 			}
 			else
 			{
@@ -260,7 +267,10 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 		foreach ($fileIds as $fileId)
 		{
 			$file = $this->filesRepository->getById($fileId);
-			$this->uploadedFiles[] = $file;
+			if ($file !== NULL)
+			{
+				$this->uploadedFiles[] = $file;
+			}
 		}
 	}
 
