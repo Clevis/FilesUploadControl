@@ -153,14 +153,6 @@ abstract class FilesUploadControl_TestCase extends TestCase
 		$uploadedFile->shouldReceive('getFileName')->zeroOrMoreTimes()->andReturn($fileName);
 		$uploadedFile->shouldReceive('getFileSize')->zeroOrMoreTimes()->andReturn($fileSize);
 		$uploadedFile->shouldReceive('getContentType')->zeroOrMoreTimes()->andReturn($contentType);
-		$uploadedFile->shouldReceive('getExtension')->zeroOrMoreTimes()->andReturnUsing(function () use ($uploadedFile)
-		{
-			/** @var \Clevis\FilesUpload\IFileEntity $uploadedFile */
-			$fileName = $uploadedFile->getFileName();
-			$dotPosition = strrpos($fileName, '.');
-			$extensionPosition = $dotPosition !== FALSE ? $dotPosition + 1 : strlen($fileName);
-			return substr($fileName, $extensionPosition);
-		});
 		return $uploadedFile;
 	}
 

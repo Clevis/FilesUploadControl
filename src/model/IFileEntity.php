@@ -32,13 +32,6 @@ interface IFileEntity
 	public function getContentType();
 
 	/**
-	 * File name extension.
-	 *
-	 * @return string
-	 */
-	public function getExtension();
-
-	/**
 	 * Full path to the file on filesystem.
 	 *
 	 * @return string

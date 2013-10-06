@@ -454,7 +454,11 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 			case NForm::IMAGE:
 				return in_array($file->getContentType(), array('image/gif', 'image/png', 'image/jpeg'), true);
 			case self::RULE_EXTENSION:
-				return in_array($file->getExtension(), (array) $argument, true);
+				$fileName = $file->getFileName();
+				$dotPosition = strrpos($fileName, '.');
+				$extensionPosition = $dotPosition !== FALSE ? $dotPosition + 1 : strlen($fileName);
+				$extension = substr($fileName, $extensionPosition);
+				return in_array($extension, (array) $argument, true);
 			case self::RULE_FILE_EXISTS:
 				return file_exists($file->getFullPath());
 		}
