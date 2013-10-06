@@ -5,7 +5,9 @@ namespace Clevis\FilesUpload;
 use Nette\Application\Responses\JsonResponse;
 use Nette\Application\UI\ISignalReceiver;
 use Nette\ComponentModel\IComponent;
+use Nette\Forms\Controls\CsrfProtection;
 use Nette\Forms\Form as NForm;
+use Nette\Forms\Form;
 use Nette\Forms\Rules;
 use Nette\Forms\Validator;
 use Nette\Http\FileUpload;
@@ -79,6 +81,37 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 		$this->autoUploadsSessionSection = $autoUploadsSession;
 	}
 
+	public function getUploadLink()
+	{
+		return $this->getSignalLink('upload');
+	}
+
+	public function getDeleteLink(IFileEntity $file)
+	{
+		return $this->getSignalLink('delete', array('id' => $file->getId()));
+	}
+
+	/**
+	 * @param string $signalName
+	 * @param array $args
+	 * @return string
+	 */
+	private function getSignalLink($signalName, $args = array())
+	{
+		$path = $this->lookupPath('Nette\Application\UI\Presenter');
+		$protector = $this->form->getComponent(Form::PROTECTOR_ID, FALSE);
+		if ($protector instanceof CsrfProtection)
+		{
+			$args += array(Form::PROTECTOR_ID => $protector->getToken());
+		}
+		$prefixedArgs = array();
+		foreach ($args as $key => $value)
+		{
+			$prefixedArgs[$path . '-' . $key] = $value;
+		}
+		return $this->getPresenter()->link($path . '-' . $signalName . '!', $prefixedArgs);
+	}
+
 	protected function createFilePayload(IFileEntity $file)
 	{
 		if ($file->getId() === NULL)
@@ -88,14 +121,13 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 				'error' => 'Upload refused.',
 			);
 		}
-		$pathPrefix = $this->lookupPath('Nette\Application\UI\Presenter') . self::NAME_SEPARATOR;
 		$filePayload = array(
 			'id' => $file->getId(),
 			'name' => $file->getFileName(),
 			'size' => $file->getFileSize(),
 			'type' => $file->getContentType(),
 			'delete_type' => 'DELETE',
-			'delete_url' => $this->getPresenter()->link($pathPrefix . 'delete!', array($pathPrefix . 'id' => $file->getId())),
+			'delete_url' => $this->getDeleteLink($file),
 		);
 		if ($this->urlProvider)
 		{
@@ -247,6 +279,9 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 
 	public function signalReceived($signal)
 	{
+		$pathToControl = $this->lookupPath('Nette\Application\UI\Presenter');
+		$parameters = $this->getPresenter()->popGlobalParameters($pathToControl);
+		$this->checkCsrfProtection($parameters);
 		if ($signal === 'upload')
 		{
 			$this->handleUpload();
@@ -255,8 +290,6 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 		{
 			if ($signal === 'delete')
 			{
-				$pathToControl = $this->lookupPath('Nette\Application\UI\Presenter');
-				$parameters = $this->getPresenter()->popGlobalParameters($pathToControl);
 				$file = $this->filesRepository->getById((array) Arrays::get($parameters, 'id'));
 				$this->handleDelete($file);
 			}
@@ -426,6 +459,17 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 				return file_exists($file->getFullPath());
 		}
 		return true;
+	}
+
+	private function checkCsrfProtection($parameters)
+	{
+		$protector = $this->form->getComponent(Form::PROTECTOR_ID, FALSE);
+		$requestToken = Arrays::get($parameters, Form::PROTECTOR_ID, NULL);
+		$formToken = $protector instanceof CsrfProtection ? $protector->getToken() : NULL;
+		if ($protector && $formToken !== $requestToken)
+		{
+			$this->getPresenter()->error('Nelze provést požadavek, platnost formuláře vypršela.', 403);
+		}
 	}
 
 }

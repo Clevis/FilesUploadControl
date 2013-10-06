@@ -48,8 +48,7 @@ Tato komponenta se neomezuje pouze na nahrávání nových souborů, lze ji úsp
 
 ### Ajaxový upload signál
 
-`{var $pathToThisControl = $control->lookupPath('Nette\Application\UI\Presenter')}`
-`{plink "$pathToThisControl-upload!"}`
+`{$control->getUploadLink()}`
 
 Přijímá soubory v poli `htmlName[]`, vrací JSON payload v tomto formátu:
 
@@ -102,12 +101,11 @@ Pokud jsou na controlu nasazené nějaké další validátory, tak na ty dojde a
 
 ### Ajaxový delete signál
 
-`{var $pathToThisControl = $control->lookupPath('Nette\Application\UI\Presenter')}`
-`{plink "$pathToThisControl-delete!"}`
+`{$control->getDeleteLink(IFileEntity $file)}`
 
 Pokud má komponenta nastavenou session section (viz `setAutoUploadsSessionSection()`), tak tímto signálem lze smazat soubory (resp. zavolat `IFilesRepositor::deleteFile()`), které byly uploadovány přes upload signál, ale ještě nebyly zpracovány při odeslání formuláře.
 
-Ale i pokud session nastavená není, nebo v ní není ten soubor, tak se zavolají události `onBeforeDelete` a `onDelete`, takže si to chování můžete i rozšířit. Do toho bych se ale nepouštěl, dokud se nějak uspokojivě nevyřeší CSRF (viz CSRF zranitelnost).
+Ale i pokud session nastavená není, nebo v ní není ten soubor, tak se zavolají události `onBeforeDelete` a `onDelete`, takže si to chování můžete i rozšířit.
 
 Bez ohledu na výsledek operace vrací tuto odpověď:
 
@@ -130,8 +128,6 @@ Události:
 - `onDelete(IFileEntity $file)` - po smazání, i pokud neproběhlo. Tohle asi změním.
 
 
-## CSRF zranitelnost
+## Obrana proti CSRF
 
-Upload ani delete signál nejsou ošetřené proti CSRF. Hrachův trait použít nelze, protože jednak chceme ještě zachovat kompatibilitu s PHP 5.3 a jednak tohle není `UI\Control`.
-
-Je to řešitelné, ale nemá to prioritu.
+Pokud je formulář chráněný pomocí `Form::addProtection()`, tak jsou chráněné i ajaxové signály této komponenty. Metody `getUploadLink()` a `getDeleteLink()` k URL signálu přidají token a ten se při zpracování signálu zkontroluje.

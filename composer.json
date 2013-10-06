@@ -16,7 +16,8 @@
 	},
 	"require-dev": {
 		"nette/nette": "@dev",
-		"mockery/mockery": "@dev"
+		"mockery/mockery": "@dev",
+		"petrp/access": "@dev"
 	},
 
 	"autoload": {
