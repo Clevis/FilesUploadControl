@@ -116,4 +116,14 @@ class FilesUploadControl_submitValidation_Test extends FilesUploadControl_TestCa
 		$this->assertSame(array('Extension.'), $this->control->getErrors());
 	}
 
+	public function testAcceptValid_caseInsensitiveExtension()
+	{
+		$file = $this->createFileMock(1, 'test.GIF');
+		$this->expectFilesMock('createNewFile', array(Mockery::any(), Mockery::any()), $file);
+		$this->control->addRule(\Clevis\FilesUpload\FilesUploadControl::RULE_EXTENSION, 'Extension.', 'gif');
+		$request = $this->createUploadSubmitRequest(array($this->createNetteHttpFileUpload('test.gif')));
+		$this->runRequest($request);
+		$this->assertFalse($this->control->hasErrors());
+	}
+
 }

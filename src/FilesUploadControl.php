@@ -457,8 +457,9 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 				$fileName = $file->getFileName();
 				$dotPosition = strrpos($fileName, '.');
 				$extensionPosition = $dotPosition !== FALSE ? $dotPosition + 1 : strlen($fileName);
-				$extension = substr($fileName, $extensionPosition);
-				return in_array($extension, (array) $argument, true);
+				$extension = strtolower(substr($fileName, $extensionPosition));
+				$allowedExtensions = array_map('strtolower', (array) $argument);
+				return in_array($extension, $allowedExtensions, true);
 			case self::RULE_FILE_EXISTS:
 				return file_exists($file->getFullPath());
 		}
