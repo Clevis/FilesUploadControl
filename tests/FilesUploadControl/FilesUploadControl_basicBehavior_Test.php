@@ -23,10 +23,24 @@ class FilesUploadControl_basicBehavior_Test extends FilesUploadControl_TestCase
 		$this->assertSame('multipart/form-data', $this->form->getElementPrototype()->enctype);
 	}
 
-	public function testSetValueThrowsException()
+	public function testSetValueSetsValue()
 	{
-		$this->setExpectedException('Clevis\FilesUpload\NotImplementedException');
-		$this->control->setValue('whatever');
+		$file = $this->createFileMock(1, 'filename');
+		$this->control->setValue(array($file));
+		$this->assertSame(array($file), $this->control->getValue());
+	}
+
+	public function testSetValueIsReplacedWithSubmittedValue()
+	{
+		$file = $this->createFileMock(1, 'filename');
+		$this->control->setValue(array($file));
+		$request = $this->createUploadSubmitRequest(
+			array(
+				$this->createNetteHttpFileUpload('', array('error' => UPLOAD_ERR_NO_FILE)),
+			)
+		);
+		$this->runRequest($request);
+		$this->assertEmpty($this->control->getValue());
 	}
 
 	public function testSubmittedFilesAreNotPersistedOnlyReturnedByGetValue()

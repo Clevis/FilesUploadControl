@@ -9,7 +9,6 @@ use Nette\Forms\Controls\CsrfProtection;
 use Nette\Forms\Form as NForm;
 use Nette\Forms\Form;
 use Nette\Forms\Rules;
-use Nette\Forms\Validator;
 use Nette\Http\FileUpload;
 use Nette\Http\SessionSection;
 use Nette\Utils\Arrays;
@@ -177,14 +176,14 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 		return $this->uploadedFiles;
 	}
 
-	/**
-	 * @throws NotImplementedException
-	 */
 	public function setValue($value)
 	{
+		$this->uploadedFiles = array();
 		if ($value !== NULL)
 		{
-			throw new NotImplementedException;
+			$this->uploadedFiles = $value instanceof \Traversable
+				? iterator_to_array($value, FALSE)
+				: array_values((array) $value);
 		}
 	}
 
@@ -195,6 +194,7 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 
 	public function loadHttpData()
 	{
+		$this->uploadedFiles = array();
 		$httpData = $this->getForm()->getHttpData();
 		/** @var FileUpload[] $fileUploadInfos */
 		$fileUploadInfos = Arrays::get($httpData, $this->getHtmlName(), array());
