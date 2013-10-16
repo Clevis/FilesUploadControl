@@ -317,6 +317,7 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 		{
 			throw new BadRequestException('Upload vyžaduje method POST.');
 		}
+		$this->uploadedFiles = array();
 		$requestFiles = $request->getFiles();
 		/** @var FileUpload[] $fileInfos */
 		$fileInfos = Arrays::get($requestFiles, $this->getHtmlName(), array());

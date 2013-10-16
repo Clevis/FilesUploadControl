@@ -43,6 +43,25 @@ class FilesUploadControl_basicBehavior_Test extends FilesUploadControl_TestCase
 		$this->assertEmpty($this->control->getValue());
 	}
 
+	public function testSetValueIsNotReturnedByUploadSignalPayload()
+	{
+		$uploadedFile = $this->createFileMock(1, 'test.txt');
+		$this->expectFilesMock('createNewFile', array(Mockery::any(), Mockery::any()), $uploadedFile);
+		$this->expectFilesMock('saveFile', array($uploadedFile));
+
+		$defaultFile = $this->createFileMock(1, 'filename');
+		$this->control->setValue(array($defaultFile));
+		$request = $this->createUploadSignalRequest(
+			array(
+				$this->createNetteHttpFileUpload()
+			)
+		);
+
+		$this->runRequest($request);
+		$this->assertCount(1, $this->control->getValue());
+		$this->assertSame($uploadedFile, reset($this->control->getValue()));
+	}
+
 	public function testSubmittedFilesAreNotPersistedOnlyReturnedByGetValue()
 	{
 		$request = $this->createUploadSubmitRequest(
