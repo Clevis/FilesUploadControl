@@ -230,7 +230,7 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 			/** @var \Nette\Http\FileUpload $fileUploadInfo */
 			if ($fileUploadInfo->error === UPLOAD_ERR_OK)
 			{
-				$file = $this->filesRepository->createNewFile($fileUploadInfo->getName(), $fileUploadInfo->getTemporaryFile());
+				$file = $this->createNewFile($fileUploadInfo);
 				if ($file !== NULL)
 				{
 					$this->uploadedFiles[] = $file;
@@ -486,6 +486,15 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 		{
 			$this->getPresenter()->error('Nelze provést požadavek, platnost formuláře vypršela.', 403);
 		}
+	}
+
+	/**
+	 * @param \Nette\Http\FileUpload $fileUploadInfo
+	 * @return IFileEntity
+	 */
+	protected function createNewFile(\Nette\Http\FileUpload $fileUploadInfo)
+	{
+		return $this->filesRepository->createNewFile($fileUploadInfo->getName(), $fileUploadInfo->getTemporaryFile());
 	}
 
 }
