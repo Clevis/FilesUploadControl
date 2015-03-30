@@ -101,7 +101,7 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 		$protector = $this->form->getComponent(Form::PROTECTOR_ID, FALSE);
 		if ($protector instanceof CsrfProtection)
 		{
-			$args += array(Form::PROTECTOR_ID => $protector->getToken());
+			$args += array(Form::PROTECTOR_ID => urlencode($protector->getToken()));
 		}
 		$prefixedArgs = array();
 		foreach ($args as $key => $value)
@@ -482,7 +482,7 @@ class FilesUploadControl extends TemplateFormControl implements ISignalReceiver
 		$protector = $this->form->getComponent(Form::PROTECTOR_ID, FALSE);
 		$requestToken = Arrays::get($parameters, Form::PROTECTOR_ID, NULL);
 		$formToken = $protector instanceof CsrfProtection ? $protector->getToken() : NULL;
-		if ($protector && $formToken !== $requestToken)
+		if ($protector && urlencode($formToken) !== $requestToken)
 		{
 			$this->getPresenter()->error('Nelze provést požadavek, platnost formuláře vypršela.', 403);
 		}
